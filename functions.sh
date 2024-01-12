@@ -42,30 +42,29 @@ get_version()
 }
 source_bashrc()
 {
-	startup_file=".bashrc"
-	if [ ! -f ~/.bashrc ]; then
-		if [ -f ~/.bash_profile ]; then
-			startup_file=".bash_profile"
-		else
-			echo "touch ~/.bashrc"
-			touch ~/.bashrc
-		fi
-	fi
-	for g in $(grep "greenplum_path.sh" ~/$startup_file | grep -v "\#"); do
-		GREENPLUM_PATH=$g
-	done
-	if [ "$GREENPLUM_PATH" == "" ]; then
-		get_version
-		if [[ "$VERSION" == *"gpdb"* ]]; then
-			echo "$startup_file does not contain greenplum_path.sh"
-			echo "Please update your $startup_file for $ADMIN_USER and try again."
-			exit 1
-		fi
-	fi
-	echo "source ~/$startup_file"
-	# don't fail if an error is happening in the admin's profile
-	source ~/$startup_file || true
-	echo ""
+        if [ -f ~/.bashrc ]; then
+                # don't fail if an error is happening in the admin's profile
+                source ~/.bashrc || true
+        fi
+
+        if [ -f ~/.bash_profile ]; then
+                source ~/.bash_profile || true
+        fi
+
+        if [ -f ~/.profile ]; then
+                # don't fail if an error is happening in the admin's profile
+                source ~/.profile || true
+        fi
+        count=$(grep -v "^#" ~/.bashrc  ~/.*profile  | grep "greenplum_path" | wc -l)
+        if [ "$count" -eq "0" ]; then
+                get_version
+                if [[ "$VERSION" == *"gpdb"* ]]; then
+                        echo "$startup_file does not contain greenplum_path.sh"
+                        echo "Please update your $startup_file for $ADMIN_USER and try again."
+                        exit 1
+                fi
+        fi
+
 }
 init_log()
 {
