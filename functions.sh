@@ -10,7 +10,7 @@ if [ "$count" -gt "0" ]; then
         unalias ls
 fi
 
-export LD_PRELOAD=/lib64/libz.so.1 ps
+#export LD_PRELOAD=/lib64/libz.so.1 ps
 
 LOCAL_PWD=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 OSVERSION=$(uname)
