@@ -267,7 +267,7 @@ echo_variables()
 check_user
 check_variables
 yum_installs
-repo_init
+#repo_init
 script_check
 echo_variables
 
