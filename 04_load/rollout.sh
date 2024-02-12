@@ -46,8 +46,9 @@ start_gpfdist()
 			GEN_DATA_PATH=$(echo $i | awk -F '|' '{print $3}')
 			GEN_DATA_PATH=$GEN_DATA_PATH/arenadata
 			PORT=$(($GPFDIST_PORT + $CHILD))
+			echo `whoami`
 			echo "executing on $EXT_HOST ./start_gpfdist.sh $PORT $GEN_DATA_PATH"
-			ssh -n -f $EXT_HOST "bash -c 'cd ~/; ./start_gpfdist.sh $PORT $GEN_DATA_PATH'"
+			ssh -n -f $EXT_HOST "bash -l -c 'cd ~/; ./start_gpfdist.sh $PORT $GEN_DATA_PATH'"
 			sleep 1
 		done
 	else
