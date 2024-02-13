@@ -20,7 +20,7 @@ if [[ ! -d "$DATA_DIRECTORY" && ! -L "$DATA_DIRECTORY" ]]; then
 	mkdir $DATA_DIRECTORY
 fi
 
-rm -f $DATA_DIRECTORY/*
+rm -f $DATA_DIRECTORY/*.tbl*
 
 export DSS_PATH=$DATA_DIRECTORY
 
