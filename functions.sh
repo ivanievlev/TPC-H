@@ -79,6 +79,9 @@ start_log()
 }
 log()
 {
+	#timestamp
+	timing=$(date +%F_%T)
+
 	#duration
 	if [ "$OSVERSION" == "Linux" ]; then
 		T="$(($(date +%s%N)-T))"
