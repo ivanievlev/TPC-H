@@ -61,8 +61,8 @@ if [ "$file_count" -ne "$MULTI_USER_COUNT" ]; then
 
 	for x in $(seq 1 $MULTI_USER_COUNT); do
 		session_log=$PWD/../log/testing_session_$x.log
-		echo "$PWD/test.sh $x $EXPLAIN_ANALYZE"
-		$PWD/test.sh $x $EXPLAIN_ANALYZE  |& tee $session_log &
+		echo "$PWD/test.sh $x $EXPLAIN_ANALYZE $DBNAME"
+		$PWD/test.sh $x $EXPLAIN_ANALYZE $DBNAME |& tee $session_log &
 	done
 
 	sleep 60

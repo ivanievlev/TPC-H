@@ -5,6 +5,15 @@ PWD=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 source $PWD/../functions.sh
 source_bashrc
 DBNAME=$6
+echo "DBNAME=$DBNAME"
+IS_DB_EXIST=$(psql -d postgres -v ON_ERROR_STOP=1 -q -A -t -c "select count(*) from pg_database where datname = '$DBNAME'")
+echo "IS_DB_EXIST = $IS_DB_EXIST"
+
+if [[ "$IS_DB_EXIST" == "0" ]]; then
+        #sudo su - gpadmin -c 'psql postgres -c "create database gp_tpch"'
+        psql -d postgres -c "create database $DBNAME"
+
+fi
 
 step=init
 init_log $step
@@ -50,7 +59,7 @@ check_gucs()
 	update_config="0"
 
 	if [ "$VERSION" == "gpdb_5" ]; then
-		counter=$(psql -v ON_ERROR_STOP=1 -q -t -A -c "show optimizer_join_arity_for_associativity_commutativity" | grep -i "18" | wc -l; exit ${PIPESTATUS[0]})
+		counter=$(psql -d $DBNAME -v ON_ERROR_STOP=1 -q -t -A -c "show optimizer_join_arity_for_associativity_commutativity" | grep -i "18" | wc -l; exit ${PIPESTATUS[0]})
 		if [ "$counter" -eq "0" ]; then
 			echo "setting optimizer_join_arity_for_associativity_commutativity"
 			gpconfig -c optimizer_join_arity_for_associativity_commutativity -v 18 --skipvalidation
@@ -59,7 +68,7 @@ check_gucs()
 	fi
 
 	echo "check optimizer"
-	counter=$(psql -v ON_ERROR_STOP=1 -q -t -A -c "show optimizer" | grep -i "on" | wc -l; exit ${PIPESTATUS[0]})
+	counter=$(psql -d $DBNAME -v ON_ERROR_STOP=1 -q -t -A -c "show optimizer" | grep -i "on" | wc -l; exit ${PIPESTATUS[0]})
 
 	if [ "$counter" -eq "0" ]; then
 		echo "enabling optimizer"
@@ -68,7 +77,7 @@ check_gucs()
 	fi
 
 	echo "check analyze_root_partition"
-	counter=$(psql -v ON_ERROR_STOP=1 -q -t -A -c "show optimizer_analyze_root_partition" | grep -i "on" | wc -l; exit ${PIPESTATUS[0]})
+	counter=$(psql -d $DBNAME -v ON_ERROR_STOP=1 -q -t -A -c "show optimizer_analyze_root_partition" | grep -i "on" | wc -l; exit ${PIPESTATUS[0]})
 	if [ "$counter" -eq "0" ]; then
 		echo "enabling analyze_root_partition"
 		gpconfig -c optimizer_analyze_root_partition -v on --masteronly
@@ -76,7 +85,7 @@ check_gucs()
 	fi
 
 	echo "check gp_autostats_mode"
-	counter=$(psql -v ON_ERROR_STOP=1 -q -t -A -c "show gp_autostats_mode" | grep -i "none" | wc -l; exit ${PIPESTATUS[0]})
+	counter=$(psql -d $DBNAME -v ON_ERROR_STOP=1 -q -t -A -c "show gp_autostats_mode" | grep -i "none" | wc -l; exit ${PIPESTATUS[0]})
 	if [ "$counter" -eq "0" ]; then
 		echo "changing gp_autostats_mode to none"
 		gpconfig -c gp_autostats_mode -v none --masteronly
@@ -84,7 +93,7 @@ check_gucs()
 	fi
 
 	echo "check default_statistics_target"
-	counter=$(psql -v ON_ERROR_STOP=1 -q -t -A -c "show default_statistics_target" | grep "100" | wc -l; exit ${PIPESTATUS[0]})
+	counter=$(psql -d $DBNAME -v ON_ERROR_STOP=1 -q -t -A -c "show default_statistics_target" | grep "100" | wc -l; exit ${PIPESTATUS[0]})
 	if [ "$counter" -eq "0" ]; then
 		echo "changing default_statistics_target to 100"
 		gpconfig -c default_statistics_target -v 100
@@ -104,12 +113,15 @@ copy_config()
 		cp $MASTER_DATA_DIRECTORY/postgresql.conf $PWD/../log/
 	fi
 	#gp_segment_configuration
-	psql -v ON_ERROR_STOP=1 -q -A -t -c "SELECT * FROM gp_segment_configuration" -o $PWD/../log/gp_segment_configuration.txt
+	psql -d $DBNAME -v ON_ERROR_STOP=1 -q -A -t -c "SELECT * FROM gp_segment_configuration" -o $PWD/../log/gp_segment_configuration.txt
 }
 set_search_path()
 {
-	echo "psql -v ON_ERROR_STOP=1 -q -A -t -c \"ALTER USER $USER SET search_path=$schema_name,public;\""
-	psql -v ON_ERROR_STOP=1 -q -A -t -c "ALTER USER $USER SET search_path=$schema_name,public;"
+	#echo "psql -d $DBNAME -v ON_ERROR_STOP=1 -q -A -t -c \"ALTER USER $USER SET search_path=$schema_name,public;\""
+	#psql -d $DBNAME -v ON_ERROR_STOP=1 -q -A -t -c "ALTER USER $USER SET search_path=$schema_name,public;"
+        echo "psql -d $DBNAME -v ON_ERROR_STOP=1 -q -A -t -c \"ALTER DATABASE $DBNAME SET search_path=$schema_name,public;\""
+        psql -d $DBNAME -v ON_ERROR_STOP=1 -q -A -t -c "ALTER DATABASE $DBNAME SET search_path=$schema_name,public;"
+
 }
 
 get_version
