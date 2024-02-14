@@ -4,6 +4,7 @@ set -e
 PWD=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 source $PWD/../functions.sh
 source_bashrc
+DBNAME=$6
 
 step=init
 init_log $step

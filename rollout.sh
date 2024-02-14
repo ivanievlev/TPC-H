@@ -19,8 +19,9 @@ RUN_SINGLE_USER_REPORT="${11}"
 RUN_MULTI_USER="${12}"
 RUN_MULTI_USER_REPORT="${13}"
 SINGLE_USER_ITERATIONS="${14}"
+DBNAME="${15}"
 
-if [[ "$GEN_DATA_SCALE" == "" || "$EXPLAIN_ANALYZE" == "" || "$RANDOM_DISTRIBUTION" == "" || "$MULTI_USER_COUNT" == "" || "$RUN_COMPILE_TPCH" == "" || "$RUN_GEN_DATA" == "" || "$RUN_INIT" == "" || "$RUN_DDL" == "" || "$RUN_LOAD" == "" || "$RUN_SQL" == "" || "$RUN_SINGLE_USER_REPORT" == "" || "$RUN_MULTI_USER" == "" || "$RUN_MULTI_USER_REPORT" == "" || "$SINGLE_USER_ITERATIONS" == "" ]]; then
+if [[ "$GEN_DATA_SCALE" == "" || "$EXPLAIN_ANALYZE" == "" || "$RANDOM_DISTRIBUTION" == "" || "$MULTI_USER_COUNT" == "" || "$RUN_COMPILE_TPCH" == "" || "$RUN_GEN_DATA" == "" || "$RUN_INIT" == "" || "$RUN_DDL" == "" || "$RUN_LOAD" == "" || "$RUN_SQL" == "" || "$RUN_SINGLE_USER_REPORT" == "" || "$RUN_MULTI_USER" == "" || "$RUN_MULTI_USER_REPORT" == "" || "$SINGLE_USER_ITERATIONS" == "" || "$DBNAME" == "" ]]; then
 	echo "Parameters: scale, explain T/F, random T/F, multi-user count, run compile T/F, run gen_data T/F, run init T/F, run DDL T/F, run load T/F, run SQL T/F, run single report T/F, run multi-user T/F, run multi report T/F, and single user iterations count."
 	echo "Example: ./rollout.sh 100 false false 5 true true true true true true true true true 1"
 	exit 1
@@ -43,6 +44,7 @@ echo "##########################################################################
 echo ""
 echo "############################################################################"
 echo "GEN_DATA_SCALE: $GEN_DATA_SCALE"
+echo "DBNAME: $DBNAME"
 echo "EXPLAIN_ANALYZE: $EXPLAIN_ANALYZE"
 echo "RANDOM_DISTRIBUTION: $RANDOM_DISTRIBUTION"
 echo "MULTI_USER_COUNT: $MULTI_USER_COUNT"
@@ -105,5 +107,5 @@ fi
 	
 for i in $(ls -d $PWD/0*); do
 	echo "$i/rollout.sh"
-	$i/rollout.sh $GEN_DATA_SCALE $EXPLAIN_ANALYZE $RANDOM_DISTRIBUTION $MULTI_USER_COUNT $SINGLE_USER_ITERATIONS
+	$i/rollout.sh $GEN_DATA_SCALE $EXPLAIN_ANALYZE $RANDOM_DISTRIBUTION $MULTI_USER_COUNT $SINGLE_USER_ITERATIONS $DBNAME
 done

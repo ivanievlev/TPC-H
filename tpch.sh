@@ -32,6 +32,12 @@ check_variables()
 		echo "ADMIN_USER=\"gpadmin\"" >> $MYVAR
 		new_variable=$(($new_variable + 1))
 	fi
+        local count=$(grep "DBNAME=" $MYVAR | wc -l)
+	
+        if [ "$count" -eq "0" ]; then
+                echo "DBNAME=\"gp_tpch\"" >> $MYVAR
+                new_variable=$(($new_variable + 1))
+        fi
 	local count=$(grep "INSTALL_DIR=" $MYVAR | wc -l)
 	if [ "$count" -eq "0" ]; then
 		echo "INSTALL_DIR=\"/arenadata\"" >> $MYVAR
@@ -254,6 +260,7 @@ echo_variables()
 	echo "REPO: $REPO"
 	echo "REPO_URL: $REPO_URL"
 	echo "ADMIN_USER: $ADMIN_USER"
+	echo "DBNAME: $DBNAME"
 	echo "INSTALL_DIR: $INSTALL_DIR"
 	echo "MULTI_USER_COUNT: $MULTI_USER_COUNT"
 	echo "############################################################################"
@@ -271,5 +278,5 @@ yum_installs
 script_check
 echo_variables
 
-su --session-command="cd \"$INSTALL_DIR/$REPO\"; ./rollout.sh $GEN_DATA_SCALE $EXPLAIN_ANALYZE $RANDOM_DISTRIBUTION $MULTI_USER_COUNT $RUN_COMPILE_TPCH $RUN_GEN_DATA $RUN_INIT $RUN_DDL $RUN_LOAD $RUN_SQL $RUN_SINGLE_USER_REPORT $RUN_MULTI_USER $RUN_MULTI_USER_REPORT $SINGLE_USER_ITERATIONS" $ADMIN_USER
+su --session-command="cd \"$INSTALL_DIR/$REPO\"; ./rollout.sh $GEN_DATA_SCALE $EXPLAIN_ANALYZE $RANDOM_DISTRIBUTION $MULTI_USER_COUNT $RUN_COMPILE_TPCH $RUN_GEN_DATA $RUN_INIT $RUN_DDL $RUN_LOAD $RUN_SQL $RUN_SINGLE_USER_REPORT $RUN_MULTI_USER $RUN_MULTI_USER_REPORT $SINGLE_USER_ITERATIONS $DBNAME" $ADMIN_USER
 
