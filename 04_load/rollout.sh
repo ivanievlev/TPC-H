@@ -116,7 +116,7 @@ i=$(basename $max_id | awk -F '.' '{print $1}' | sed 's/^0*//')
 if [[ "$VERSION" == *"gpdb"* ]]; then
 	dbname="$PGDATABASE"
 	if [ "$dbname" == "" ]; then
-		dbname="$ADMIN_USER"
+		dbname="$DBNAME"
 	fi
 
 	if [ "$PGPORT" == "" ]; then
