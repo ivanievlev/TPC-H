@@ -40,12 +40,12 @@ for i in $(ls $PWD/*.tpch.*.sql); do
 		start_log
 		if [ "$EXPLAIN_ANALYZE" == "false" ]; then
 			echo "psql -d $DBNAME -c \"SET statement_timeout=$STATEMENT_TIMEOUT;\" -v ON_ERROR_STOP=$ON_ERROR_STOP -A -q -t -P pager=off -v EXPLAIN_ANALYZE=\"\" -f $i | wc -l"
-			tuples=$(psql -d $DBNAME -c "SET statement_timeout=$STATEMENT_TIMEOUT;" -v ON_ERROR_STOP=$ON_ERROR_STOP -A -q -t -P pager=off -v EXPLAIN_ANALYZE="" -f $i | wc -l; exit ${PIPESTATUS[0]})
+			tuples=$(psql -d $DBNAME -c "SET statement_timeout='$STATEMENT_TIMEOUT';" -v ON_ERROR_STOP=$ON_ERROR_STOP -A -q -t -P pager=off -v EXPLAIN_ANALYZE="" -f $i | wc -l; exit ${PIPESTATUS[0]})
 		else
 			myfilename=$(basename $i)
 			mylogfile=$PWD/../log/$myfilename.single.explain_analyze.log
 			echo "psql -d $DBNAME -c \"SET statement_timeout=$STATEMENT_TIMEOUT;\" -v ON_ERROR_STOP=$ON_ERROR_STOP -A -q -t -P pager=off -v EXPLAIN_ANALYZE=\"EXPLAIN ANALYZE\" -f $i > $mylogfile"
-			psql -d $DBNAME -c "SET statement_timeout=$STATEMENT_TIMEOUT;" -v ON_ERROR_STOP=$ON_ERROR_STOP -A -q -t -P pager=off -v EXPLAIN_ANALYZE="EXPLAIN ANALYZE" -f $i > $mylogfile
+			psql -d $DBNAME -c "SET statement_timeout='$STATEMENT_TIMEOUT';" -v ON_ERROR_STOP=$ON_ERROR_STOP -A -q -t -P pager=off -v EXPLAIN_ANALYZE="EXPLAIN ANALYZE" -f $i > $mylogfile
 			tuples="0"
 		fi
 		log $tuples
