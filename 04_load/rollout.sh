@@ -103,7 +103,7 @@ else
 				start_log
 				filename="'""$filename""'"
 				echo "psql -d $DBNAME -v ON_ERROR_STOP=1 -f $i -v filename=\"$filename\" | grep COPY | awk -F ' ' '{print \$2}'"
-				tuples=$(psql -d $DBNAME -v ON_ERROR_STOP=1 -f $i -v filename="$filename" | grep COPY | awk -F ' ' '{print $2}'; exit ${PIPESTATUS[0]})
+				tuples=$(psql -d $DBNAME -v ON_ERROR_STOP=1 -f $i -v filename="$filename" & | grep COPY | awk -F ' ' '{print $2}'; exit ${PIPESTATUS[0]} &)
 				log $tuples
 			fi
 		done

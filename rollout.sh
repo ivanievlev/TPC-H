@@ -20,6 +20,8 @@ RUN_MULTI_USER="${12}"
 RUN_MULTI_USER_REPORT="${13}"
 SINGLE_USER_ITERATIONS="${14}"
 DBNAME="${15}"
+SQL_ON_ERROR_STOP="${16}"
+STATEMENT_TIMEOUT="${17}"
 
 if [[ "$GEN_DATA_SCALE" == "" || "$EXPLAIN_ANALYZE" == "" || "$RANDOM_DISTRIBUTION" == "" || "$MULTI_USER_COUNT" == "" || "$RUN_COMPILE_TPCH" == "" || "$RUN_GEN_DATA" == "" || "$RUN_INIT" == "" || "$RUN_DDL" == "" || "$RUN_LOAD" == "" || "$RUN_SQL" == "" || "$RUN_SINGLE_USER_REPORT" == "" || "$RUN_MULTI_USER" == "" || "$RUN_MULTI_USER_REPORT" == "" || "$SINGLE_USER_ITERATIONS" == "" || "$DBNAME" == "" ]]; then
 	echo "Parameters: scale, explain T/F, random T/F, multi-user count, run compile T/F, run gen_data T/F, run init T/F, run DDL T/F, run load T/F, run SQL T/F, run single report T/F, run multi-user T/F, run multi report T/F, and single user iterations count."
@@ -58,6 +60,8 @@ echo "SINGLE_USER_ITERATIONS: $SINGLE_USER_ITERATIONS"
 echo "RUN_SINGLE_USER_REPORT: $RUN_SINGLE_USER_REPORT"
 echo "RUN_MULTI_USER: $RUN_MULTI_USER"
 echo "RUN_MULTI_USER_REPORT: $RUN_MULTI_USER_REPORT"
+echo "SQL_ON_ERROR_STOP: $SQL_ON_ERROR_STOP"
+echo "STATEMENT_TIMEOUT: $STATEMENT_TIMEOUT"
 echo "############################################################################"
 echo ""
 if [ "$RUN_COMPILE_TPCH" == "true" ]; then
@@ -107,5 +111,5 @@ fi
 	
 for i in $(ls -d $PWD/0*); do
 	echo "$i/rollout.sh"
-	$i/rollout.sh $GEN_DATA_SCALE $EXPLAIN_ANALYZE $RANDOM_DISTRIBUTION $MULTI_USER_COUNT $SINGLE_USER_ITERATIONS $DBNAME
+	$i/rollout.sh $GEN_DATA_SCALE $EXPLAIN_ANALYZE $RANDOM_DISTRIBUTION $MULTI_USER_COUNT $SINGLE_USER_ITERATIONS $DBNAME $SQL_ON_ERROR_STOP $STATEMENT_TIMEOUT
 done

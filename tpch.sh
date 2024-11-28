@@ -123,6 +123,19 @@ check_variables()
 		new_variable=$(($new_variable + 1))
 	fi
 
+	local count=$(grep "SQL_ON_ERROR_STOP" $MYVAR | wc -l)
+  if [ "$count" -eq "0" ]; then
+    echo "SQL_ON_ERROR_STOP=\"true\"" >> $MYVAR
+    new_variable=$(($new_variable + 1))
+  fi
+
+	local count=$(grep "STATEMENT_TIMEOUT" $MYVAR | wc -l)
+  if [ "$count" -eq "0" ]; then
+    echo "STATEMENT_TIMEOUT=\"1h\"" >> $MYVAR
+    new_variable=$(($new_variable + 1))
+  fi
+
+
 	if [ "$new_variable" -gt "0" ]; then
 		echo "There are new variables in the tpch_variables.sh file.  Please review to ensure the values are correct and then re-run this script."
 		exit 1
@@ -278,5 +291,5 @@ yum_installs
 script_check
 echo_variables
 
-su --session-command="cd \"$INSTALL_DIR/$REPO\"; ./rollout.sh $GEN_DATA_SCALE $EXPLAIN_ANALYZE $RANDOM_DISTRIBUTION $MULTI_USER_COUNT $RUN_COMPILE_TPCH $RUN_GEN_DATA $RUN_INIT $RUN_DDL $RUN_LOAD $RUN_SQL $RUN_SINGLE_USER_REPORT $RUN_MULTI_USER $RUN_MULTI_USER_REPORT $SINGLE_USER_ITERATIONS $DBNAME" $ADMIN_USER
+su --session-command="cd \"$INSTALL_DIR/$REPO\"; ./rollout.sh $GEN_DATA_SCALE $EXPLAIN_ANALYZE $RANDOM_DISTRIBUTION $MULTI_USER_COUNT $RUN_COMPILE_TPCH $RUN_GEN_DATA $RUN_INIT $RUN_DDL $RUN_LOAD $RUN_SQL $RUN_SINGLE_USER_REPORT $RUN_MULTI_USER $RUN_MULTI_USER_REPORT $SINGLE_USER_ITERATIONS $DBNAME $SQL_ON_ERROR_STOP $STATEMENT_TIMEOUT" $ADMIN_USER
 
