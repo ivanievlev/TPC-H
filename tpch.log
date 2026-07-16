@@ -1,0 +1,396 @@
+############################################################################
+Make sure root is executing this script.
+############################################################################
+
+############################################################################
+Sourcing tpch_variables.sh
+############################################################################
+
+############################################################################
+Install git and gcc with yum.
+############################################################################
+
+
+############################################################################
+Install the github repository.
+############################################################################
+
+Host key verification failed.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+Reset branch 'ADPG-5212'
+M	01_gen_data/queries/qgen
+M	03_ddl/09.postgresql.customer.sql
+M	03_ddl/10.postgresql.lineitem.sql
+M	03_ddl/11.postgresql.nation.sql
+M	03_ddl/12.postgresql.orders.sql
+M	03_ddl/13.postgresql.part.sql
+M	03_ddl/14.postgresql.partsupp.sql
+M	03_ddl/15.postgresql.region.sql
+M	03_ddl/16.postgresql.supplier.sql
+D	03_ddl/17.postgresql.foreignkeys.sql
+M	04_load/rollout.sh
+Branch 'ADPG-5212' set up to track remote branch 'ADPG-5212' from 'origin'.
+Your branch is up to date with 'origin/ADPG-5212'.
+HEAD is now at 2ab207c Added `REPO_BRANCH` parameter to specify the git branch for `tpch.sh`, defaulting to `master`.
+############################################################################
+Make sure this script is up to date.
+############################################################################
+
+tpch.sh script is up to date so continuing to TPC-H.
+
+############################################################################
+REPO: TPC-H
+REPO_URL: https://github.com/ivanievlev/TPC-H
+REPO_BRANCH: ADPG-5212
+ADMIN_USER: postgres
+DBNAME: pg_tpch
+INSTALL_DIR: /arenadata
+MULTI_USER_COUNT: 5
+############################################################################
+
+grep: /var/lib/pgsql/.bashrc: No such file or directory
+############################################################################
+TPC-H Script for Pivotal Greenplum Database and Pivotal HAWQ.
+############################################################################
+
+############################################################################
+GEN_DATA_SCALE: 100
+DBNAME: pg_tpch
+EXPLAIN_ANALYZE: false
+RANDOM_DISTRIBUTION: false
+MULTI_USER_COUNT: 5
+RUN_COMPILE_TPCH: false
+RUN_GEN_DATA: false
+RUN_INIT: true
+RUN_DDL: true
+RUN_LOAD: true
+RUN_SQL: true
+SINGLE_USER_ITERATIONS: 1
+RUN_SINGLE_USER_REPORT: true
+RUN_MULTI_USER: true
+RUN_MULTI_USER_REPORT: true
+SQL_ON_ERROR_STOP: true
+STATEMENT_TIMEOUT: 1h
+############################################################################
+
+INFO: Make sure passwordless ssh is allowed.
+/arenadata/TPC-H/00_compile_tpch/rollout.sh
+grep: /var/lib/pgsql/.bashrc: No such file or directory
+/arenadata/TPC-H/01_gen_data/rollout.sh
+grep: /var/lib/pgsql/.bashrc: No such file or directory
+/arenadata/TPC-H/02_init/rollout.sh
+grep: /var/lib/pgsql/.bashrc: No such file or directory
+DBNAME=pg_tpch
+IS_DB_EXIST = 0
+CREATE DATABASE
+psql -d pg_tpch -v ON_ERROR_STOP=1 -q -A -t -c "ALTER DATABASE pg_tpch SET search_path=tpch,public;"
+2026-07-16_15:57:02|1|tpch.init|0|00:00:00.020
+/arenadata/TPC-H/03_ddl/rollout.sh
+grep: /var/lib/pgsql/.bashrc: No such file or directory
+psql -d pg_tpch -v ON_ERROR_STOP=1 -q -a -P pager=off -f /arenadata/TPC-H/03_ddl/00.postgresql.tpch.sql -v SMALL_STORAGE="" -v MEDIUM_STORAGE="" -v LARGE_STORAGE="" -v DISTRIBUTED_BY=""
+DROP SCHEMA IF EXISTS tpch CASCADE;
+psql:/arenadata/TPC-H/03_ddl/00.postgresql.tpch.sql:1: NOTICE:  schema "tpch" does not exist, skipping
+DROP SCHEMA IF EXISTS ext_tpch CASCADE;
+psql:/arenadata/TPC-H/03_ddl/00.postgresql.tpch.sql:2: NOTICE:  schema "ext_tpch" does not exist, skipping
+CREATE SCHEMA tpch;
+CREATE SCHEMA ext_tpch;
+2026-07-16_15:57:02|00|postgresql.tpch|0|00:00:00.010
+psql -d pg_tpch -v ON_ERROR_STOP=1 -q -a -P pager=off -f /arenadata/TPC-H/03_ddl/09.postgresql.customer.sql -v SMALL_STORAGE="" -v MEDIUM_STORAGE="" -v LARGE_STORAGE="" -v DISTRIBUTED_BY=""
+CREATE TABLE tpch.customer
+(C_CUSTKEY INT, 
+C_NAME VARCHAR(25),
+C_ADDRESS VARCHAR(40),
+C_NATIONKEY INTEGER,
+C_PHONE CHAR(15),
+C_ACCTBAL DECIMAL(15,2),
+C_MKTSEGMENT CHAR(10),
+C_COMMENT VARCHAR(117),
+dummy text);
+ALTER TABLE tpch.customer ADD PRIMARY KEY (c_custkey);
+2026-07-16_15:57:02|09|postgresql.customer|0|00:00:00.016
+psql -d pg_tpch -v ON_ERROR_STOP=1 -q -a -P pager=off -f /arenadata/TPC-H/03_ddl/10.postgresql.lineitem.sql -v SMALL_STORAGE="" -v MEDIUM_STORAGE="" -v LARGE_STORAGE="" -v DISTRIBUTED_BY=""
+CREATE TABLE tpch.lineitem
+(L_ORDERKEY BIGINT,
+L_PARTKEY INT,
+L_SUPPKEY INT,
+L_LINENUMBER INTEGER,
+L_QUANTITY DECIMAL(15,2),
+L_EXTENDEDPRICE DECIMAL(15,2),
+L_DISCOUNT DECIMAL(15,2),
+L_TAX DECIMAL(15,2),
+L_RETURNFLAG CHAR(1),
+L_LINESTATUS CHAR(1),
+L_SHIPDATE DATE,
+L_COMMITDATE DATE,
+L_RECEIPTDATE DATE,
+L_SHIPINSTRUCT CHAR(25),
+L_SHIPMODE CHAR(10),
+L_COMMENT VARCHAR(44),
+dummy text);
+ALTER TABLE tpch.lineitem ADD PRIMARY KEY (l_orderkey, l_linenumber);
+2026-07-16_15:57:02|10|postgresql.lineitem|0|00:00:00.016
+psql -d pg_tpch -v ON_ERROR_STOP=1 -q -a -P pager=off -f /arenadata/TPC-H/03_ddl/11.postgresql.nation.sql -v SMALL_STORAGE="" -v MEDIUM_STORAGE="" -v LARGE_STORAGE="" -v DISTRIBUTED_BY=""
+CREATE TABLE tpch.nation
+(N_NATIONKEY INTEGER, 
+N_NAME CHAR(25), 
+N_REGIONKEY INTEGER, 
+N_COMMENT VARCHAR(152),
+dummy text);
+ALTER TABLE tpch.nation ADD PRIMARY KEY (n_nationkey);
+2026-07-16_15:57:02|11|postgresql.nation|0|00:00:00.015
+psql -d pg_tpch -v ON_ERROR_STOP=1 -q -a -P pager=off -f /arenadata/TPC-H/03_ddl/12.postgresql.orders.sql -v SMALL_STORAGE="" -v MEDIUM_STORAGE="" -v LARGE_STORAGE="" -v DISTRIBUTED_BY=""
+CREATE TABLE tpch.orders
+(O_ORDERKEY BIGINT,
+O_CUSTKEY INT,
+O_ORDERSTATUS CHAR(1),
+O_TOTALPRICE DECIMAL(15,2),
+O_ORDERDATE DATE,
+O_ORDERPRIORITY CHAR(15), 
+O_CLERK  CHAR(15), 
+O_SHIPPRIORITY INTEGER,
+O_COMMENT VARCHAR(79),
+dummy text);
+ALTER TABLE tpch.orders ADD PRIMARY KEY (o_orderkey);
+2026-07-16_15:57:02|12|postgresql.orders|0|00:00:00.016
+psql -d pg_tpch -v ON_ERROR_STOP=1 -q -a -P pager=off -f /arenadata/TPC-H/03_ddl/13.postgresql.part.sql -v SMALL_STORAGE="" -v MEDIUM_STORAGE="" -v LARGE_STORAGE="" -v DISTRIBUTED_BY=""
+CREATE TABLE tpch.part
+(P_PARTKEY INT,
+P_NAME VARCHAR(55),
+P_MFGR CHAR(25),
+P_BRAND CHAR(10),
+P_TYPE VARCHAR(25),
+P_SIZE INTEGER,
+P_CONTAINER CHAR(10),
+P_RETAILPRICE DECIMAL(15,2),
+P_COMMENT VARCHAR(23),
+dummy text);
+ALTER TABLE tpch.part ADD PRIMARY KEY (p_partkey);
+2026-07-16_15:57:02|13|postgresql.part|0|00:00:00.016
+psql -d pg_tpch -v ON_ERROR_STOP=1 -q -a -P pager=off -f /arenadata/TPC-H/03_ddl/14.postgresql.partsupp.sql -v SMALL_STORAGE="" -v MEDIUM_STORAGE="" -v LARGE_STORAGE="" -v DISTRIBUTED_BY=""
+CREATE TABLE tpch.partsupp
+(PS_PARTKEY INT,
+PS_SUPPKEY INT,
+PS_AVAILQTY INTEGER,
+PS_SUPPLYCOST DECIMAL(15,2),
+PS_COMMENT VARCHAR(199),
+dummy text);
+ALTER TABLE tpch.partsupp ADD PRIMARY KEY (ps_partkey, ps_suppkey);
+2026-07-16_15:57:02|14|postgresql.partsupp|0|00:00:00.016
+psql -d pg_tpch -v ON_ERROR_STOP=1 -q -a -P pager=off -f /arenadata/TPC-H/03_ddl/15.postgresql.region.sql -v SMALL_STORAGE="" -v MEDIUM_STORAGE="" -v LARGE_STORAGE="" -v DISTRIBUTED_BY=""
+CREATE TABLE tpch.region
+(R_REGIONKEY INTEGER, 
+R_NAME CHAR(25),
+R_COMMENT VARCHAR(152),
+dummy text);
+ALTER TABLE tpch.region ADD PRIMARY KEY (r_regionkey);
+2026-07-16_15:57:02|15|postgresql.region|0|00:00:00.020
+psql -d pg_tpch -v ON_ERROR_STOP=1 -q -a -P pager=off -f /arenadata/TPC-H/03_ddl/16.postgresql.supplier.sql -v SMALL_STORAGE="" -v MEDIUM_STORAGE="" -v LARGE_STORAGE="" -v DISTRIBUTED_BY=""
+CREATE TABLE tpch.SUPPLIER 
+(S_SUPPKEY INT,
+S_NAME CHAR(25),
+S_ADDRESS VARCHAR(40),
+S_NATIONKEY INTEGER,
+S_PHONE CHAR(15),
+S_ACCTBAL DECIMAL(15,2),
+S_COMMENT VARCHAR(101),
+dummy text);
+ALTER TABLE tpch.supplier ADD PRIMARY KEY (s_suppkey);
+2026-07-16_15:57:02|16|postgresql.supplier|0|00:00:00.015
+psql -d pg_tpch -v ON_ERROR_STOP=1 -q -a -P pager=off -f /arenadata/TPC-H/03_ddl/17.postgresql.foreignkeys.sql -v SMALL_STORAGE="" -v MEDIUM_STORAGE="" -v LARGE_STORAGE="" -v DISTRIBUTED_BY=""
+ALTER TABLE supplier ADD CONSTRAINT supplier_nation_fk FOREIGN KEY (s_nationkey) REFERENCES nation (n_nationkey);
+ALTER TABLE partsupp ADD CONSTRAINT partsupp_part_fk FOREIGN KEY (ps_partkey) REFERENCES part (p_partkey);
+ALTER TABLE partsupp ADD CONSTRAINT partsupp_supplier_fk FOREIGN KEY (ps_suppkey) REFERENCES supplier (s_suppkey);
+ALTER TABLE customer ADD CONSTRAINT customer_nation_fk FOREIGN KEY (c_nationkey) REFERENCES nation (n_nationkey);
+ALTER TABLE orders ADD CONSTRAINT orders_customer_fk FOREIGN KEY (o_custkey) REFERENCES customer (c_custkey);
+ALTER TABLE lineitem ADD CONSTRAINT lineitem_order_fk FOREIGN KEY (l_orderkey) REFERENCES orders (o_orderkey);
+ALTER TABLE lineitem ADD CONSTRAINT lineitem_part_fk FOREIGN KEY (l_partkey) REFERENCES part (p_partkey);
+ALTER TABLE lineitem ADD CONSTRAINT lineitem_partsupp_fk FOREIGN KEY (l_partkey, l_suppkey) REFERENCES partsupp (ps_partkey, ps_suppkey);
+ALTER TABLE nation ADD CONSTRAINT nation_region_fk FOREIGN KEY (n_regionkey) REFERENCES region (r_regionkey);
+CREATE INDEX lineitem_idx3 ON lineitem (l_partkey, l_suppkey);
+2026-07-16_15:57:02|17|postgresql.foreignkeys|0|00:00:00.022
+/arenadata/TPC-H/04_load/rollout.sh
+grep: /var/lib/pgsql/.bashrc: No such file or directory
+parallel: 16
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/051.postgresql.region.sql -v filename="'/pg_data1/adpg16/arenadata_1/region.tbl'" | grep COPY | awk -F ' ' '{print $2}'
+2026-07-16_15:57:02|051|postgresql.region|5|00:00:00.011
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/052.postgresql.nation.sql -v filename="'/pg_data1/adpg16/arenadata_1/nation.tbl'" | grep COPY | awk -F ' ' '{print $2}'
+2026-07-16_15:57:02|052|postgresql.nation|25|00:00:00.012
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/053.postgresql.customer.sql -v filename="'/pg_data1/adpg16/arenadata_1/customer.tbl.1'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/053.postgresql.customer.sql -v filename="'/pg_data1/adpg16/arenadata_2/customer.tbl.2'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/053.postgresql.customer.sql -v filename="'/pg_data1/adpg16/arenadata_3/customer.tbl.3'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/053.postgresql.customer.sql -v filename="'/pg_data1/adpg16/arenadata_4/customer.tbl.4'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/053.postgresql.customer.sql -v filename="'/pg_data1/adpg16/arenadata_5/customer.tbl.5'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/053.postgresql.customer.sql -v filename="'/pg_data1/adpg16/arenadata_6/customer.tbl.6'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/053.postgresql.customer.sql -v filename="'/pg_data1/adpg16/arenadata_7/customer.tbl.7'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/053.postgresql.customer.sql -v filename="'/pg_data1/adpg16/arenadata_8/customer.tbl.8'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/053.postgresql.customer.sql -v filename="'/pg_data1/adpg16/arenadata_9/customer.tbl.9'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/053.postgresql.customer.sql -v filename="'/pg_data1/adpg16/arenadata_10/customer.tbl.10'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/053.postgresql.customer.sql -v filename="'/pg_data1/adpg16/arenadata_11/customer.tbl.11'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/053.postgresql.customer.sql -v filename="'/pg_data1/adpg16/arenadata_12/customer.tbl.12'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/053.postgresql.customer.sql -v filename="'/pg_data1/adpg16/arenadata_13/customer.tbl.13'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/053.postgresql.customer.sql -v filename="'/pg_data1/adpg16/arenadata_14/customer.tbl.14'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/053.postgresql.customer.sql -v filename="'/pg_data1/adpg16/arenadata_15/customer.tbl.15'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/053.postgresql.customer.sql -v filename="'/pg_data1/adpg16/arenadata_16/customer.tbl.16'" | grep COPY | awk -F ' ' '{print $2}'
+2026-07-16_15:57:21|053|postgresql.customer|937500|00:00:18.18098
+2026-07-16_15:57:46|053|postgresql.customer|937500|00:00:43.43591
+2026-07-16_15:57:46|053|postgresql.customer|937500|00:00:43.43629
+2026-07-16_15:57:46|053|postgresql.customer|937500|00:00:43.43731
+2026-07-16_15:57:46|053|postgresql.customer|937500|00:00:43.43732
+2026-07-16_15:57:46|053|postgresql.customer|937500|00:00:43.43732
+2026-07-16_15:57:46|053|postgresql.customer|937500|00:00:43.43842
+2026-07-16_15:57:46|053|postgresql.customer|937500|00:00:43.43896
+2026-07-16_15:57:46|053|postgresql.customer|937500|00:00:43.43993
+2026-07-16_15:57:46|053|postgresql.customer|937500|00:00:44.44026
+2026-07-16_15:57:47|053|postgresql.customer|937500|00:00:44.44058
+2026-07-16_15:57:47|053|postgresql.customer|937500|00:00:44.44078
+2026-07-16_15:57:47|053|postgresql.customer|937500|00:00:44.44084
+2026-07-16_15:57:47|053|postgresql.customer|937500|00:00:44.44101
+2026-07-16_15:57:47|053|postgresql.customer|937500|00:00:44.44175
+2026-07-16_15:57:47|053|postgresql.customer|937500|00:00:44.44198
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/054.postgresql.part.sql -v filename="'/pg_data1/adpg16/arenadata_1/part.tbl.1'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/054.postgresql.part.sql -v filename="'/pg_data1/adpg16/arenadata_2/part.tbl.2'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/054.postgresql.part.sql -v filename="'/pg_data1/adpg16/arenadata_3/part.tbl.3'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/054.postgresql.part.sql -v filename="'/pg_data1/adpg16/arenadata_4/part.tbl.4'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/054.postgresql.part.sql -v filename="'/pg_data1/adpg16/arenadata_5/part.tbl.5'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/054.postgresql.part.sql -v filename="'/pg_data1/adpg16/arenadata_6/part.tbl.6'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/054.postgresql.part.sql -v filename="'/pg_data1/adpg16/arenadata_7/part.tbl.7'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/054.postgresql.part.sql -v filename="'/pg_data1/adpg16/arenadata_8/part.tbl.8'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/054.postgresql.part.sql -v filename="'/pg_data1/adpg16/arenadata_9/part.tbl.9'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/054.postgresql.part.sql -v filename="'/pg_data1/adpg16/arenadata_10/part.tbl.10'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/054.postgresql.part.sql -v filename="'/pg_data1/adpg16/arenadata_11/part.tbl.11'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/054.postgresql.part.sql -v filename="'/pg_data1/adpg16/arenadata_12/part.tbl.12'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/054.postgresql.part.sql -v filename="'/pg_data1/adpg16/arenadata_13/part.tbl.13'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/054.postgresql.part.sql -v filename="'/pg_data1/adpg16/arenadata_14/part.tbl.14'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/054.postgresql.part.sql -v filename="'/pg_data1/adpg16/arenadata_15/part.tbl.15'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/054.postgresql.part.sql -v filename="'/pg_data1/adpg16/arenadata_16/part.tbl.16'" | grep COPY | awk -F ' ' '{print $2}'
+2026-07-16_15:58:00|054|postgresql.part|1250000|00:00:13.13236
+2026-07-16_15:58:14|054|postgresql.part|1250000|00:00:27.27009
+2026-07-16_15:58:14|054|postgresql.part|1250000|00:00:27.27070
+2026-07-16_15:58:15|054|postgresql.part|1250000|00:00:28.28418
+2026-07-16_15:58:16|054|postgresql.part|1250000|00:00:29.29070
+2026-07-16_15:58:16|054|postgresql.part|1250000|00:00:29.29090
+2026-07-16_15:58:16|054|postgresql.part|1250000|00:00:29.29180
+2026-07-16_15:58:16|054|postgresql.part|1250000|00:00:29.29187
+2026-07-16_15:58:16|054|postgresql.part|1250000|00:00:29.29202
+2026-07-16_15:58:16|054|postgresql.part|1250000|00:00:29.29196
+2026-07-16_15:58:16|054|postgresql.part|1250000|00:00:29.29207
+2026-07-16_15:58:16|054|postgresql.part|1250000|00:00:29.29220
+2026-07-16_15:58:16|054|postgresql.part|1250000|00:00:29.29230
+2026-07-16_15:58:16|054|postgresql.part|1250000|00:00:29.29235
+2026-07-16_15:58:16|054|postgresql.part|1250000|00:00:29.29264
+2026-07-16_15:58:16|054|postgresql.part|1250000|00:00:29.29273
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/055.postgresql.supplier.sql -v filename="'/pg_data1/adpg16/arenadata_1/supplier.tbl.1'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/055.postgresql.supplier.sql -v filename="'/pg_data1/adpg16/arenadata_2/supplier.tbl.2'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/055.postgresql.supplier.sql -v filename="'/pg_data1/adpg16/arenadata_3/supplier.tbl.3'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/055.postgresql.supplier.sql -v filename="'/pg_data1/adpg16/arenadata_4/supplier.tbl.4'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/055.postgresql.supplier.sql -v filename="'/pg_data1/adpg16/arenadata_5/supplier.tbl.5'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/055.postgresql.supplier.sql -v filename="'/pg_data1/adpg16/arenadata_6/supplier.tbl.6'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/055.postgresql.supplier.sql -v filename="'/pg_data1/adpg16/arenadata_7/supplier.tbl.7'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/055.postgresql.supplier.sql -v filename="'/pg_data1/adpg16/arenadata_8/supplier.tbl.8'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/055.postgresql.supplier.sql -v filename="'/pg_data1/adpg16/arenadata_9/supplier.tbl.9'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/055.postgresql.supplier.sql -v filename="'/pg_data1/adpg16/arenadata_10/supplier.tbl.10'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/055.postgresql.supplier.sql -v filename="'/pg_data1/adpg16/arenadata_11/supplier.tbl.11'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/055.postgresql.supplier.sql -v filename="'/pg_data1/adpg16/arenadata_12/supplier.tbl.12'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/055.postgresql.supplier.sql -v filename="'/pg_data1/adpg16/arenadata_13/supplier.tbl.13'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/055.postgresql.supplier.sql -v filename="'/pg_data1/adpg16/arenadata_14/supplier.tbl.14'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/055.postgresql.supplier.sql -v filename="'/pg_data1/adpg16/arenadata_15/supplier.tbl.15'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/055.postgresql.supplier.sql -v filename="'/pg_data1/adpg16/arenadata_16/supplier.tbl.16'" | grep COPY | awk -F ' ' '{print $2}'
+2026-07-16_15:58:17|055|postgresql.supplier|62500|00:00:01.1356
+2026-07-16_15:58:19|055|postgresql.supplier|62500|00:00:02.2659
+2026-07-16_15:58:19|055|postgresql.supplier|62500|00:00:02.2660
+2026-07-16_15:58:19|055|postgresql.supplier|62500|00:00:02.2673
+2026-07-16_15:58:19|055|postgresql.supplier|62500|00:00:02.2676
+2026-07-16_15:58:19|055|postgresql.supplier|62500|00:00:02.2679
+2026-07-16_15:58:19|055|postgresql.supplier|62500|00:00:02.2688
+2026-07-16_15:58:19|055|postgresql.supplier|62500|00:00:02.2685
+2026-07-16_15:58:19|055|postgresql.supplier|62500|00:00:02.2688
+2026-07-16_15:58:19|055|postgresql.supplier|62500|00:00:02.2691
+2026-07-16_15:58:19|055|postgresql.supplier|62500|00:00:02.2692
+2026-07-16_15:58:19|055|postgresql.supplier|62500|00:00:02.2695
+2026-07-16_15:58:19|055|postgresql.supplier|62500|00:00:02.2701
+2026-07-16_15:58:19|055|postgresql.supplier|62500|00:00:02.2697
+2026-07-16_15:58:19|055|postgresql.supplier|62500|00:00:02.2696
+2026-07-16_15:58:19|055|postgresql.supplier|62500|00:00:02.2693
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/056.postgresql.partsupp.sql -v filename="'/pg_data1/adpg16/arenadata_1/partsupp.tbl.1'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/056.postgresql.partsupp.sql -v filename="'/pg_data1/adpg16/arenadata_2/partsupp.tbl.2'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/056.postgresql.partsupp.sql -v filename="'/pg_data1/adpg16/arenadata_3/partsupp.tbl.3'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/056.postgresql.partsupp.sql -v filename="'/pg_data1/adpg16/arenadata_4/partsupp.tbl.4'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/056.postgresql.partsupp.sql -v filename="'/pg_data1/adpg16/arenadata_5/partsupp.tbl.5'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/056.postgresql.partsupp.sql -v filename="'/pg_data1/adpg16/arenadata_6/partsupp.tbl.6'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/056.postgresql.partsupp.sql -v filename="'/pg_data1/adpg16/arenadata_7/partsupp.tbl.7'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/056.postgresql.partsupp.sql -v filename="'/pg_data1/adpg16/arenadata_8/partsupp.tbl.8'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/056.postgresql.partsupp.sql -v filename="'/pg_data1/adpg16/arenadata_9/partsupp.tbl.9'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/056.postgresql.partsupp.sql -v filename="'/pg_data1/adpg16/arenadata_10/partsupp.tbl.10'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/056.postgresql.partsupp.sql -v filename="'/pg_data1/adpg16/arenadata_11/partsupp.tbl.11'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/056.postgresql.partsupp.sql -v filename="'/pg_data1/adpg16/arenadata_12/partsupp.tbl.12'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/056.postgresql.partsupp.sql -v filename="'/pg_data1/adpg16/arenadata_13/partsupp.tbl.13'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/056.postgresql.partsupp.sql -v filename="'/pg_data1/adpg16/arenadata_14/partsupp.tbl.14'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/056.postgresql.partsupp.sql -v filename="'/pg_data1/adpg16/arenadata_15/partsupp.tbl.15'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/056.postgresql.partsupp.sql -v filename="'/pg_data1/adpg16/arenadata_16/partsupp.tbl.16'" | grep COPY | awk -F ' ' '{print $2}'
+2026-07-16_16:02:00|056|postgresql.partsupp|5000000|00:03:41.221516
+2026-07-16_16:02:29|056|postgresql.partsupp|5000000|00:04:10.250084
+2026-07-16_16:02:29|056|postgresql.partsupp|5000000|00:04:10.250187
+2026-07-16_16:02:29|056|postgresql.partsupp|5000000|00:04:10.250375
+2026-07-16_16:02:29|056|postgresql.partsupp|5000000|00:04:10.250448
+2026-07-16_16:02:29|056|postgresql.partsupp|5000000|00:04:10.250480
+2026-07-16_16:02:29|056|postgresql.partsupp|5000000|00:04:10.250527
+2026-07-16_16:02:30|056|postgresql.partsupp|5000000|00:04:10.250978
+2026-07-16_16:02:30|056|postgresql.partsupp|5000000|00:04:11.251170
+2026-07-16_16:02:30|056|postgresql.partsupp|5000000|00:04:11.251179
+2026-07-16_16:02:30|056|postgresql.partsupp|5000000|00:04:11.251550
+2026-07-16_16:02:30|056|postgresql.partsupp|5000000|00:04:11.251559
+2026-07-16_16:02:30|056|postgresql.partsupp|5000000|00:04:11.251677
+2026-07-16_16:02:31|056|postgresql.partsupp|5000000|00:04:11.251822
+2026-07-16_16:02:31|056|postgresql.partsupp|5000000|00:04:11.251887
+2026-07-16_16:02:31|056|postgresql.partsupp|5000000|00:04:11.251935
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/057.postgresql.orders.sql -v filename="'/pg_data1/adpg16/arenadata_1/orders.tbl.1'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/057.postgresql.orders.sql -v filename="'/pg_data1/adpg16/arenadata_2/orders.tbl.2'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/057.postgresql.orders.sql -v filename="'/pg_data1/adpg16/arenadata_3/orders.tbl.3'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/057.postgresql.orders.sql -v filename="'/pg_data1/adpg16/arenadata_4/orders.tbl.4'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/057.postgresql.orders.sql -v filename="'/pg_data1/adpg16/arenadata_5/orders.tbl.5'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/057.postgresql.orders.sql -v filename="'/pg_data1/adpg16/arenadata_6/orders.tbl.6'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/057.postgresql.orders.sql -v filename="'/pg_data1/adpg16/arenadata_7/orders.tbl.7'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/057.postgresql.orders.sql -v filename="'/pg_data1/adpg16/arenadata_8/orders.tbl.8'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/057.postgresql.orders.sql -v filename="'/pg_data1/adpg16/arenadata_9/orders.tbl.9'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/057.postgresql.orders.sql -v filename="'/pg_data1/adpg16/arenadata_10/orders.tbl.10'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/057.postgresql.orders.sql -v filename="'/pg_data1/adpg16/arenadata_11/orders.tbl.11'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/057.postgresql.orders.sql -v filename="'/pg_data1/adpg16/arenadata_12/orders.tbl.12'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/057.postgresql.orders.sql -v filename="'/pg_data1/adpg16/arenadata_13/orders.tbl.13'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/057.postgresql.orders.sql -v filename="'/pg_data1/adpg16/arenadata_14/orders.tbl.14'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/057.postgresql.orders.sql -v filename="'/pg_data1/adpg16/arenadata_15/orders.tbl.15'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/057.postgresql.orders.sql -v filename="'/pg_data1/adpg16/arenadata_16/orders.tbl.16'" | grep COPY | awk -F ' ' '{print $2}'
+2026-07-16_16:14:06|057|postgresql.orders|9375000|00:11:34.694973
+2026-07-16_16:14:40|057|postgresql.orders|9375000|00:12:09.729175
+2026-07-16_16:14:42|057|postgresql.orders|9375000|00:12:11.731605
+2026-07-16_16:14:42|057|postgresql.orders|9375000|00:12:11.731745
+2026-07-16_16:14:43|057|postgresql.orders|9375000|00:12:11.731888
+2026-07-16_16:14:43|057|postgresql.orders|9375000|00:12:12.732057
+2026-07-16_16:14:43|057|postgresql.orders|9375000|00:12:12.732092
+2026-07-16_16:14:43|057|postgresql.orders|9375000|00:12:12.732434
+2026-07-16_16:14:43|057|postgresql.orders|9375000|00:12:12.732513
+2026-07-16_16:14:43|057|postgresql.orders|9375000|00:12:12.732572
+2026-07-16_16:14:43|057|postgresql.orders|9375000|00:12:12.732590
+2026-07-16_16:14:44|057|postgresql.orders|9375000|00:12:13.733118
+2026-07-16_16:14:44|057|postgresql.orders|9375000|00:12:13.733232
+2026-07-16_16:14:44|057|postgresql.orders|9375000|00:12:13.733474
+2026-07-16_16:14:44|057|postgresql.orders|9375000|00:12:13.733748
+2026-07-16_16:14:45|057|postgresql.orders|9375000|00:12:13.733947
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/058.postgresql.lineitem.sql -v filename="'/pg_data1/adpg16/arenadata_1/lineitem.tbl.1'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/058.postgresql.lineitem.sql -v filename="'/pg_data1/adpg16/arenadata_2/lineitem.tbl.2'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/058.postgresql.lineitem.sql -v filename="'/pg_data1/adpg16/arenadata_3/lineitem.tbl.3'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/058.postgresql.lineitem.sql -v filename="'/pg_data1/adpg16/arenadata_4/lineitem.tbl.4'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/058.postgresql.lineitem.sql -v filename="'/pg_data1/adpg16/arenadata_5/lineitem.tbl.5'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/058.postgresql.lineitem.sql -v filename="'/pg_data1/adpg16/arenadata_6/lineitem.tbl.6'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/058.postgresql.lineitem.sql -v filename="'/pg_data1/adpg16/arenadata_7/lineitem.tbl.7'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/058.postgresql.lineitem.sql -v filename="'/pg_data1/adpg16/arenadata_8/lineitem.tbl.8'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/058.postgresql.lineitem.sql -v filename="'/pg_data1/adpg16/arenadata_9/lineitem.tbl.9'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/058.postgresql.lineitem.sql -v filename="'/pg_data1/adpg16/arenadata_10/lineitem.tbl.10'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/058.postgresql.lineitem.sql -v filename="'/pg_data1/adpg16/arenadata_11/lineitem.tbl.11'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/058.postgresql.lineitem.sql -v filename="'/pg_data1/adpg16/arenadata_12/lineitem.tbl.12'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/058.postgresql.lineitem.sql -v filename="'/pg_data1/adpg16/arenadata_13/lineitem.tbl.13'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/058.postgresql.lineitem.sql -v filename="'/pg_data1/adpg16/arenadata_14/lineitem.tbl.14'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/058.postgresql.lineitem.sql -v filename="'/pg_data1/adpg16/arenadata_15/lineitem.tbl.15'" | grep COPY | awk -F ' ' '{print $2}'
+psql -d pg_tpch -v ON_ERROR_STOP=1 -f /arenadata/TPC-H/04_load/058.postgresql.lineitem.sql -v filename="'/pg_data1/adpg16/arenadata_16/lineitem.tbl.16'" | grep COPY | awk -F ' ' '{print $2}'

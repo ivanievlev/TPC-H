@@ -94,8 +94,8 @@ else
 	echo "parallel: $PARALLEL"
 
 	# для каждой таблицы все партиции COPY запускаются параллельно
-	# в фоне (&), затем wait ждёт завершения всей пачки. 
-	# При этом таблицы грузятся по порядку из-за внешних ключей.
+	# в фоне (&), затем wait ждёт завершения всей пачки.
+	# PK/FK/индексы намеренно НЕ создаются до COPY (см. constraints_after_load.sql).
 	for i in $(ls $PWD/*.$filter.*.sql); do
 		id=$(echo $i | awk -F '.' '{print $1}')
 		schema_name=$(echo $i | awk -F '.' '{print $2}')
@@ -131,9 +131,20 @@ else
 			exit 1
 		fi
 	done
+
+	# После загрузки данных: PRIMARY KEY, индексы, FOREIGN KEY
+	echo "creating primary keys, indexes and foreign keys after load"
+	start_log
+	i="$PWD/constraints_after_load.sql"
+	id="059"
+	schema_name="tpch"
+	table_name="constraints"
+	echo "psql -d $DBNAME -v ON_ERROR_STOP=1 -f $i"
+	psql -d $DBNAME -v ON_ERROR_STOP=1 -f $i
+	log 0
 fi
 
-max_id=$(ls $PWD/*.sql | tail -1)
+max_id=$(ls $PWD/*.$filter.*.sql | tail -1)
 i=$(basename $max_id | awk -F '.' '{print $1}' | sed 's/^0*//')
 
 if [[ "$VERSION" == *"gpdb"* ]]; then
