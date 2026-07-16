@@ -3,6 +3,7 @@
 
 - Added support for Greenplum 7.x 
 - Changed compression options from quicklz to zstd
+- Added `REPO_BRANCH` parameter to select the git branch used by `tpch.sh` (default: `master`)
 
 ## Installation
 
@@ -31,6 +32,7 @@ tail -f tpch.log
 
 - REPO="TPC-H"
 - REPO_URL="https://github.com/ivanievlev/TPC-H"
+- REPO_BRANCH="master"
 - ADMIN_USER="gpadmin"
 - INSTALL_DIR="/arenadata"
 - EXPLAIN_ANALYZE="false"
