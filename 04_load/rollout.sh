@@ -93,20 +93,43 @@ else
 	PARALLEL=$(lscpu --parse=cpu | grep -v "#" | wc -l)
 	echo "parallel: $PARALLEL"
 
+	# для каждой таблицы все партиции COPY запускаются параллельно
+	# в фоне (&), затем wait ждёт завершения всей пачки. 
+	# При этом таблицы грузятся по порядку из-за внешних ключей.
 	for i in $(ls $PWD/*.$filter.*.sql); do
 		id=$(echo $i | awk -F '.' '{print $1}')
 		schema_name=$(echo $i | awk -F '.' '{print $2}')
 		table_name=$(echo $i | awk -F '.' '{print $3}')
+		pids=()
 		for p in $(seq 1 $PARALLEL); do
-			filename=$(echo $PGDATA/arenadata_$p/$table_name.tbl*)
-			if [[ -f $filename && -s $filename ]]; then
-				start_log
-				filename="'""$filename""'"
-				echo "psql -d $DBNAME -v ON_ERROR_STOP=1 -f $i -v filename=\"$filename\" | grep COPY | awk -F ' ' '{print \$2}'"
-				tuples=$(psql -d $DBNAME -v ON_ERROR_STOP=1 -f $i -v filename="$filename" & | grep COPY | awk -F ' ' '{print $2}'; exit ${PIPESTATUS[0]} &)
-				log $tuples
+			# включчаем и выключаем nullglob: если файла нет, то не оставлять литерал со звездочкой
+			shopt -s nullglob
+			files=($PGDATA/arenadata_$p/$table_name.tbl*)
+			shopt -u nullglob
+			for raw_filename in "${files[@]}"; do
+				if [[ -f $raw_filename && -s $raw_filename ]]; then
+					echo "psql -d $DBNAME -v ON_ERROR_STOP=1 -f $i -v filename=\"'$raw_filename'\" | grep COPY | awk -F ' ' '{print \$2}'"
+					(
+						start_log
+						filename="'""$raw_filename""'"
+						tuples=$(psql -d $DBNAME -v ON_ERROR_STOP=1 -f $i -v filename="$filename" | grep COPY | awk -F ' ' '{print $2}'; exit ${PIPESTATUS[0]})
+						log $tuples
+					) &
+					pids+=($!)
+				fi
+			done
+		done
+		# дожидаемся всех фоновых COPY по текущей таблице
+		fail=0
+		for pid in "${pids[@]}"; do
+			if ! wait "$pid"; then
+				fail=1
 			fi
 		done
+		if [ "$fail" -ne 0 ]; then
+			echo "ERROR: one or more parallel COPY jobs failed for $table_name"
+			exit 1
+		fi
 	done
 fi
 
