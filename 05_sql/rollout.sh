@@ -21,7 +21,7 @@ if [[ "$GEN_DATA_SCALE" == "" || "$EXPLAIN_ANALYZE" == "" || "$RANDOM_DISTRIBUTI
 fi
 
 step=sql
-init_log
+init_log $step
 
 echo "SQL_ON_ERROR_STOP = $SQL_ON_ERROR_STOP"
 if [ "$SQL_ON_ERROR_STOP" == "true" ]; then

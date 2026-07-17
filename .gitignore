@@ -2,10 +2,14 @@
 log/
 *.log
 
-# generated binaries / build artifacts
+# generated binaries / build artifacts (not in master)
 00_compile_tpch/dbgen/*.o
 00_compile_tpch/dbgen/dbgen
 00_compile_tpch/dbgen/qgen
+
+# generated query files (created at runtime; not in master)
+05_sql/*.tpch.*.sql
+07_multi_user/queries/
 
 # local run config and host lists
 tpch_variables.sh
