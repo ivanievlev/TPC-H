@@ -27,6 +27,11 @@ check_variables()
 		echo "REPO_URL=\"https://github.com/ivanievlev/TPC-H\"" >> $MYVAR
 		new_variable=$(($new_variable + 1))
 	fi
+	local count=$(grep "REPO_BRANCH=" $MYVAR | wc -l)
+	if [ "$count" -eq "0" ]; then
+		echo "REPO_BRANCH=\"master\"" >> $MYVAR
+		new_variable=$(($new_variable + 1))
+	fi
 	local count=$(grep "ADMIN_USER=" $MYVAR | wc -l)
 	if [ "$count" -eq "0" ]; then
 		echo "ADMIN_USER=\"gpadmin\"" >> $MYVAR
@@ -221,24 +226,41 @@ repo_init()
 		fi
 	fi
 
+	# REPO_BRANCH задаётся в tpch_variables.sh (по умолчанию master)
+	if [ -z "$REPO_BRANCH" ]; then
+		REPO_BRANCH="master"
+	fi
+
 	if [ ! -d $INSTALL_DIR/$REPO ]; then
 		if [ "$internet_down" -eq "1" ]; then
 			echo "Unable to continue because repo hasn't been downloaded and Internet is not available."
 			exit 1
 		else
 			echo ""
-			echo "Creating $REPO directory"
+			echo "Creating $REPO directory (branch: $REPO_BRANCH)"
 			echo "-------------------------------------------------------------------------"
 			mkdir $INSTALL_DIR/$REPO
 			chown $ADMIN_USER $INSTALL_DIR/$REPO
-			su -c "cd $INSTALL_DIR; GIT_SSL_NO_VERIFY=true; git clone --depth=1 $REPO_URL" $ADMIN_USER
+			su -c "cd $INSTALL_DIR; GIT_SSL_NO_VERIFY=true git clone --depth=1 -b $REPO_BRANCH $REPO_URL" $ADMIN_USER
 		fi
 	else
 		chown -R $ADMIN_USER $INSTALL_DIR/$REPO
 		if [ "$internet_down" -eq "0" ]; then
 			git config --global user.email "$ADMIN_USER@$HOSTNAME"
 			git config --global user.name "$ADMIN_USER"
-			su -c "cd $INSTALL_DIR/$REPO; GIT_SSL_NO_VERIFY=true; git fetch --all; git reset --hard origin/master" $ADMIN_USER
+			# Переключение на REPO_BRANCH: сначала пробуем origin/<branch>,
+			# если remote-ветки нет — используем локальную ветку с тем же именем.
+			su -c "cd $INSTALL_DIR/$REPO; \
+				GIT_SSL_NO_VERIFY=true git fetch origin $REPO_BRANCH || true; \
+				if git rev-parse --verify origin/$REPO_BRANCH >/dev/null 2>&1; then \
+					git checkout -B $REPO_BRANCH origin/$REPO_BRANCH; \
+					git reset --hard origin/$REPO_BRANCH; \
+				elif git rev-parse --verify $REPO_BRANCH >/dev/null 2>&1; then \
+					git checkout $REPO_BRANCH; \
+				else \
+					echo \"ERROR: branch $REPO_BRANCH not found locally or on origin\"; \
+					exit 1; \
+				fi" $ADMIN_USER
 		fi
 	fi
 }
@@ -272,6 +294,7 @@ echo_variables()
 	echo "############################################################################"
 	echo "REPO: $REPO"
 	echo "REPO_URL: $REPO_URL"
+	echo "REPO_BRANCH: $REPO_BRANCH"
 	echo "ADMIN_USER: $ADMIN_USER"
 	echo "DBNAME: $DBNAME"
 	echo "INSTALL_DIR: $INSTALL_DIR"
@@ -287,7 +310,8 @@ echo_variables()
 check_user
 check_variables
 yum_installs
-#repo_init
+# Переключает репозиторий на ветку REPO_BRANCH из tpch_variables.sh
+repo_init
 script_check
 echo_variables
 
