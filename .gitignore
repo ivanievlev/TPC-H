@@ -1,0 +1,12 @@
+# runtime logs and step markers
+log/
+*.log
+
+# generated binaries / build artifacts
+00_compile_tpch/dbgen/*.o
+00_compile_tpch/dbgen/dbgen
+00_compile_tpch/dbgen/qgen
+
+# local run config and host lists
+tpch_variables.sh
+segment_hosts.txt

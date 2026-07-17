@@ -133,15 +133,36 @@ else
 	done
 
 	# После загрузки данных: PRIMARY KEY, индексы, FOREIGN KEY
+	# Каждый statement из constraints_after_load.sql — отдельно, со своим таймингом в логе
 	echo "creating primary keys, indexes and foreign keys after load"
-	start_log
-	i="$PWD/constraints_after_load.sql"
-	id="059"
-	schema_name="tpch"
-	table_name="constraints"
-	echo "psql -d $DBNAME -v ON_ERROR_STOP=1 -f $i"
-	psql -d $DBNAME -v ON_ERROR_STOP=1 -f $i
-	log 0
+	constraint_id=59
+	while IFS= read -r stmt || [ -n "$stmt" ]; do
+		# пропускаем пустые строки и комментарии
+		[[ "$stmt" =~ ^[[:space:]]*$ ]] && continue
+		[[ "$stmt" =~ ^[[:space:]]*-- ]] && continue
+		stmt="${stmt%"${stmt##*[![:space:]]}"}"  # trim trailing whitespace
+		[[ "$stmt" != *\; ]] && continue
+
+		# метка для лога: имя PK / INDEX / CONSTRAINT
+		if [[ "$stmt" =~ CREATE[[:space:]]+INDEX[[:space:]]+([a-zA-Z0-9_]+) ]]; then
+			table_name="${BASH_REMATCH[1]}"
+		elif [[ "$stmt" =~ ADD[[:space:]]+CONSTRAINT[[:space:]]+([a-zA-Z0-9_]+) ]]; then
+			table_name="${BASH_REMATCH[1]}"
+		elif [[ "$stmt" =~ ALTER[[:space:]]+TABLE[[:space:]]+tpch\.([a-zA-Z0-9_]+)[[:space:]]+ADD[[:space:]]+PRIMARY[[:space:]]+KEY ]]; then
+			table_name="${BASH_REMATCH[1]}_pkey"
+		else
+			table_name="constraint_${constraint_id}"
+		fi
+
+		start_log
+		schema_name="tpch"
+		# log() берёт id из basename $i до первой точки
+		i=$(printf "%03d.tpch.%s.sql" "$constraint_id" "$table_name")
+		echo "psql -d $DBNAME -v ON_ERROR_STOP=1 -c \"$stmt\""
+		psql -d $DBNAME -v ON_ERROR_STOP=1 -c "$stmt"
+		log 0
+		constraint_id=$((constraint_id + 1))
+	done < "$PWD/constraints_after_load.sql"
 fi
 
 max_id=$(ls $PWD/*.$filter.*.sql | tail -1)
